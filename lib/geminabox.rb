@@ -80,21 +80,30 @@ class Geminabox < Sinatra::Base
   end
 
   get '/atom.xml' do
+    ensure_authenticated User
     @gems = load_gems
     erb :atom, layout: false
   end
 
   get '/upload' do
+    ensure_authenticated User
     erb :upload
   end
 
   delete '/gems/*.gem' do
-    File.delete file_path if File.exists? file_path
-    reindex
-    redirect "/"
+    ensure_authenticated User
+    unless authenticated(User).can_delete_gems?
+      flash[:error] = "You don't have permission to do that!"
+      redirect "/"
+    else
+      File.delete file_path if File.exists? file_path
+      reindex
+      redirect "/"
+    end
   end
 
   post '/upload' do
+    ensure_authenticated User
     return "Please ensure #{File.expand_path(Geminabox.data)} is writable by the geminabox web server." unless File.writable? Geminabox.data
     unless params[:file] && (tmpfile = params[:file][:tempfile]) && (name = params[:file][:filename])
       @error = "No file selected"

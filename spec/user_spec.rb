@@ -55,4 +55,24 @@ describe User do
       user.should_not be_valid
     end
   end
+
+  describe "permissions" do
+    before do
+      @user = User.create(:email => "a@a.com", :password => "asdf")
+    end
+    context "user with permission to delete gems" do
+      before do
+        @user.can_delete_gems = true
+        @user.save
+      end
+      it "can delete gems" do
+        @user.can_delete_gems?.should be_true
+      end
+    end
+    context "user without permission to delete gems" do
+      it "cannot delete gems" do
+        @user.can_delete_gems?.should be_false
+      end
+    end
+  end
 end

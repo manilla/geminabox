@@ -108,4 +108,35 @@ describe Geminabox do
       end
     end
   end
+  describe "/gems/*.gem" do
+    context "when current user has delete gem permission" do
+      before do
+        @user = User.new(email: "a@a.com", password: "asdf")
+        @user.can_delete_gems = true
+        @user.save
+        post '/authenticate', user: {email: "a@a.com", password: "asdf"}
+      end
+      it "succeeds" do
+        Geminabox.any_instance.stubs(:file_path)
+        Geminabox.any_instance.stubs(:reindex)
+        File.expects(:exists?).returns(true)
+        File.expects(:delete).returns(true)
+        delete "/gems/test.gem"
+        last_response.should be_redirect
+      end
+    end
+    context "when current user does not have delete gem permission" do
+      before do
+        @user = User.create(email: "a@a.com", password: "asdf")
+        post '/authenticate', user: {email: "a@a.com", password: "asdf"}
+      end
+      it "renders permission unauthorized" do
+        File.expects(:exists?).never
+        File.expects(:delete).never
+        delete "/gems/test.gem"
+        last_response.should be_redirect
+        flash[:error].should match "You don't have permission to do that!"
+      end
+    end
+  end
 end
