@@ -13,6 +13,7 @@ class User < Sequel::Model(:users)
       primary_key :id
       text :email
       text :crypted_password
+      boolean :can_delete_gems, :default => false
       timestamp :created_at
     end
     create_table
@@ -20,19 +21,23 @@ class User < Sequel::Model(:users)
 
   extend Shield::Model
 
+  def validate
+    super
+    errors.add(:email, "is required") if !email || email == ""
+    errors.add(:password, "is required") if !password || password == ""
+  end
+
   def self.fetch(email)
     first(:email => email)
+  end
+
+  def can_delete_gems?
+    self.can_delete_gems
   end
 
   def password=(pass)
     self.crypted_password = Shield::Password.encrypt(pass)
     @password = pass
-  end
-
-  def validate
-    super
-    errors.add(:email, "is required") if !email || email == ""
-    errors.add(:password, "is required") if !password || password == ""
   end
 
   def self.find_by_email email
