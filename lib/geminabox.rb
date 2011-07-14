@@ -71,6 +71,7 @@ class Geminabox < Sinatra::Base
       if user.valid?
         user.save
         flash[:notice] = "Registered successfully"
+        redirect '/login'
       else
         flash[:error] = user.errors.full_messages.join(", ")
         status, headers, body = call env.merge("REQUEST_METHOD" => "GET", "PATH_INFO" => '/register')
