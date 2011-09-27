@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    geminabox (0.3.0)
+    geminabox (0.3.0.manilla)
       builder
       rack-flash
       shield
