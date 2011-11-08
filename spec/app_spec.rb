@@ -108,6 +108,22 @@ describe Geminabox do
       end
     end
   end
+
+  describe "/upload" do
+    context "with incorrect basic auth params" do
+      it "returns not authorized" do
+        post '/upload'
+        last_response.status.should == 401
+      end
+    end
+    context "with correct basic auth params" do
+      it "allows upload" do
+        # authorize 'basic', 'auth' -- Rack::Test
+        # post '/upload', ???
+      end
+    end
+  end
+
   describe "/gems/*.gem" do
     context "when current user has delete gem permission" do
       before do
