@@ -47,7 +47,7 @@ class Geminabox < Sinatra::Base
     logout User
     redirect '/login'
   end
-  
+
   post '/authenticate' do
     if login(User, params['user']['email'], params['user']['password'])
       redirect '/'
@@ -104,7 +104,10 @@ class Geminabox < Sinatra::Base
   end
 
   post '/upload' do
-    ensure_authenticated User
+    @auth = Rack::Auth::Basic::Request.new(request.env)
+    throw(:halt, [401, "Not authorized\n"]) unless (@auth.provided? && @auth.basic? && @auth.credentials)
+    throw(:halt, [401, "Not authorized\n"]) unless @auth.credentials == ['basic', 'auth']
+
     return "Please ensure #{File.expand_path(Geminabox.data)} is writable by the geminabox web server." unless File.writable? Geminabox.data
     unless params[:file] && (tmpfile = params[:file][:tempfile]) && (name = params[:file][:filename])
       @error = "No file selected"

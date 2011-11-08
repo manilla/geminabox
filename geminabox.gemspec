@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency('rack-test')
   s.add_development_dependency('rspec_tag_matchers')
   s.add_development_dependency('mocha')
+  s.add_development_dependency('pry')
 end

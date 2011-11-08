@@ -108,6 +108,28 @@ describe Geminabox do
       end
     end
   end
+
+  describe "/upload" do
+    context "with incorrect basic auth params" do
+      it "returns not authorized" do
+        basic_authorize 'first', 'test'
+        post '/upload'
+        last_response.status.should == 401
+      end
+      it "doesn't blow up without authorization" do
+        post '/upload'
+        last_response.status.should == 401
+      end
+    end
+    context "with correct basic auth params" do
+      it "allows upload" do
+        basic_authorize 'basic', 'auth' #-- Rack::Test
+        post '/upload', :file => Rack::Test::UploadedFile.new(File.expand_path(File.join(__FILE__, '..', '..', 'geminabox-0.3.0.manilla.gem')), 'application', true)
+        last_response.status.should == 200
+      end
+    end
+  end
+
   describe "/gems/*.gem" do
     context "when current user has delete gem permission" do
       before do
