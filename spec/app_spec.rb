@@ -111,6 +111,9 @@ describe Geminabox do
 
   describe "/upload" do
     context "with incorrect basic auth params" do
+      before do
+        Geminabox.any_instance.stubs(:basic_auth_credentials).returns(['not', 'test'])
+      end
       it "returns not authorized" do
         basic_authorize 'first', 'test'
         post '/upload'
@@ -122,9 +125,13 @@ describe Geminabox do
       end
     end
     context "with correct basic auth params" do
+      before do
+        Geminabox.any_instance.stubs(:basic_auth_credentials).returns(['basic', 'auth'])
+      end
       it "allows upload" do
+        # TODO: This spec blows.  Requires building the gem to pass
         basic_authorize 'basic', 'auth' #-- Rack::Test
-        post '/upload', :file => Rack::Test::UploadedFile.new(File.expand_path(File.join(__FILE__, '..', '..', 'geminabox-0.3.0.manilla.gem')), 'application', true)
+        post '/upload', :file => Rack::Test::UploadedFile.new(File.expand_path(File.join(__FILE__, '..', '..', 'geminabox-0.3.1.manilla.gem')), 'application', true)
         last_response.status.should == 200
       end
     end
