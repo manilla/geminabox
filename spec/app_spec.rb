@@ -131,7 +131,7 @@ describe Geminabox do
       it "allows upload" do
         # TODO: This spec blows.  Requires building the gem to pass
         basic_authorize 'basic', 'auth' #-- Rack::Test
-        post '/upload', :file => Rack::Test::UploadedFile.new(File.expand_path(File.join(__FILE__, '..', '..', 'geminabox-0.3.1.manilla.gem')), 'application', true)
+        post '/upload', :file => Rack::Test::UploadedFile.new(File.expand_path(File.join(__FILE__, '..', '..', 'geminabox-0.3.2.manilla.gem')), 'application', true)
         last_response.status.should == 200
       end
     end
