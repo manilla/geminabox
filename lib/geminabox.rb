@@ -106,7 +106,7 @@ class Geminabox < Sinatra::Base
   post '/upload' do
     @auth = Rack::Auth::Basic::Request.new(request.env)
     throw(:halt, [401, "Not authorized\n"]) unless (@auth.provided? && @auth.basic? && @auth.credentials)
-    throw(:halt, [401, "Not authorized\n"]) unless @auth.credentials == ['basic', 'auth']
+    throw(:halt, [401, "Not authorized\n"]) unless @auth.credentials == basic_auth_credentials
 
     return "Please ensure #{File.expand_path(Geminabox.data)} is writable by the geminabox web server." unless File.writable? Geminabox.data
     unless params[:file] && (tmpfile = params[:file][:tempfile]) && (name = params[:file][:filename])
@@ -173,6 +173,11 @@ HTML
         gems
       end
     }
+  end
+
+  def basic_auth_credentials
+    return ['basic', 'auth'] unless ENV['GEMINABOX_USER'].nil?
+    [ENV['GEMINABOX_USER'], ENV['GEMINABOX_PASSWORD']]
   end
 
   def index_gems(gems)
