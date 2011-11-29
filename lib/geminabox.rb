@@ -176,7 +176,7 @@ HTML
   end
 
   def basic_auth_credentials
-    return ['basic', 'auth'] unless ENV['GEMINABOX_USER'].nil?
+    return ['basic', 'auth'] if ENV['GEMINABOX_USER'].nil?
     [ENV['GEMINABOX_USER'], ENV['GEMINABOX_PASSWORD']]
   end
 
